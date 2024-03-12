@@ -1,0 +1,42 @@
+package pdf
+
+type Container = container
+
+type container struct {
+	element
+
+	child drawable
+}
+
+func (c *container) children() []drawable {
+	return []drawable{c.child}
+}
+
+func (c *container) messure(available size) sizePlan {
+	if c.child == nil {
+		return sizePlan{}
+	}
+	return c.child.messure(available)
+}
+
+func (c *container) draw(available sizePlan) {
+	if c.child == nil {
+		return
+	}
+	c.child.draw(available)
+}
+
+// func (c *container) layers(cb func(ls *layers)) {
+// 	ls := &layers{}
+// 	cb(ls)
+// 	// c.child = ls
+// }
+
+func (c *container) Background(color string) *Container {
+	b := &background{
+		color: color,
+	}
+	c.child = b
+
+	return &b.container
+}

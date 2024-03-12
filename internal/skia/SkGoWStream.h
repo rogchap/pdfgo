@@ -1,7 +1,6 @@
 #ifndef SkGoWStream_h
 #define SkGoWStream_h
 
-// #include "include/core/SkTypes.h"
 #include "include/core/SkStream.h"
 
 class SkGoWStream : public SkWStream {

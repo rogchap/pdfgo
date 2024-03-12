@@ -8,3 +8,6 @@ void sk_canvas_draw_rect(sk_canvas_t* ccanvas, const sk_rect_t* crect, const sk_
     AsCanvas(ccanvas)->drawRect(*AsRect(crect), *AsPaint(cpaint));
 }
 
+void sk_canvas_draw_text_blob (sk_canvas_t* ccanvas, sk_textblob_t* text, float x, float y, const sk_paint_t* cpaint) {
+    AsCanvas(ccanvas)->drawTextBlob(AsTextBlob(text), x, y, *AsPaint(cpaint));
+}

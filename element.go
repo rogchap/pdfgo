@@ -3,7 +3,7 @@ package pdf
 type drawable interface {
 	children() []drawable
 	messure(available size) sizePlan
-	draw(available sizePlan)
+	draw(sp sizePlan)
 
 	setSkDoc(skdoc *skiaDoc)
 }

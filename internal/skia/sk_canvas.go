@@ -10,3 +10,7 @@ type Canvas struct {
 func (c *Canvas) DrawRect(rect *Rect, paint *Paint) {
 	C.sk_canvas_draw_rect(c.handle, rect.cptr(), paint.handle)
 }
+
+func (c *Canvas) DrawText(text *TextBlob, x, y float32, paint *Paint) {
+	C.sk_canvas_draw_text_blob(c.handle, text.handle, C.float(x), C.float(y), paint.handle)
+}

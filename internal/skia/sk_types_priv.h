@@ -54,7 +54,33 @@ DEF_CLASS_MAP(SkDocument, sk_document_t, Document)
 DEF_CLASS_MAP(SkWStream, sk_wstream_t, WStream)
 DEF_CLASS_MAP(SkCanvas, sk_canvas_t, Canvas)
 DEF_CLASS_MAP(SkPaint, sk_paint_t, Paint)
+DEF_CLASS_MAP(SkTextBlob, sk_textblob_t, TextBlob)
+DEF_CLASS_MAP(SkTextBlobBuilder, sk_textblob_builder_t, TextBlobBuilder)
+DEF_CLASS_MAP(SkFont, sk_font_t, Font)
+DEF_CLASS_MAP(SkTypeface, sk_typeface_t, Typeface)
+DEF_CLASS_MAP(SkFontMgr, sk_fontmgr_t, FontMgr)
+DEF_CLASS_MAP(SkFontStyle, sk_fontstyle_t, FontStyle)
 
 DEF_STRUCT_MAP(SkRect, sk_rect_t, Rect)
+DEF_STRUCT_MAP(SkPoint, sk_point_t, Point)
+
+#include "include/core/SkTextBlob.h"
+static inline SkTextBlobBuilder::RunBuffer AsTextBlobBuilderRunBuffer(const sk_textblob_builder_runbuffer_t* runbuffer) {
+    return {
+        (SkGlyphID*)runbuffer->glyphs,
+        (SkScalar*)runbuffer->pos,
+        (char*)runbuffer->utf8text,
+        (uint32_t*)runbuffer->clusters,
+    };
+}
+
+static inline sk_textblob_builder_runbuffer_t ToTextBlobBuilderRunBuffer(const SkTextBlobBuilder::RunBuffer runbuffer) {
+    return {
+        runbuffer.glyphs,
+        runbuffer.pos,
+        runbuffer.utf8text,
+        runbuffer.clusters,
+    };
+}
 
 #endif

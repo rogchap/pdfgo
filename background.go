@@ -1,8 +1,6 @@
 package pdf
 
 import (
-	"fmt"
-
 	"rogchap.com/pdf/internal/skia"
 )
 
@@ -19,10 +17,13 @@ func (b *background) messure(available size) sizePlan {
 	return sizePlan{}
 }
 
-func (b *background) draw(available sizePlan) {
-	fmt.Printf("%#v\n", b.skdoc.canvas)
-
-	p := skia.NewPaint(0xFF, 0xDE, 0x22, 0xCD)
-	r := skia.NewRect(0, 0, available.size.width, available.size.height)
+func (b *background) draw(sp sizePlan) {
+	// TODO: Change to real paint
+	p := skia.NewPaint(0xFF, 0xF3, 0xE2, 0xD3)
+	r := skia.NewRect(0, 0, sp.size.width, sp.size.height)
 	b.skdoc.canvas.DrawRect(&r, p)
+
+	if b.child != nil {
+		b.child.draw(sp)
+	}
 }

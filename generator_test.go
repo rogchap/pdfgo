@@ -14,7 +14,12 @@ type testDoc struct{}
 func (d *testDoc) Build(c *pdf.DocContainer) {
 	c.Page(func(page *pdf.Page) {
 		page.Size(400, 600)
-		page.Content().Background("green")
+		page.Content().
+			Background("green").
+			Text(func(text *pdf.TextBlock) {
+				text.Span("Hello World")
+				text.Span("Something else")
+			})
 	})
 }
 

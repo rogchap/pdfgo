@@ -2,6 +2,7 @@ package skia
 
 //#include "sk_textblob.h"
 import "C"
+import "unsafe"
 
 type TextBlob struct {
 	handle *C.sk_textblob_t
@@ -43,4 +44,12 @@ func (b *TextBlobBuilder) Make() *TextBlob {
 	return &TextBlob{
 		handle: C.sk_textblob_builder_make(b.handle),
 	}
+}
+
+func (buf *TextBlobBuilderRunBuffer) Glyphs(count int) []uint16 {
+	return unsafe.Slice((*uint16)(buf.glyphs), count)
+}
+
+func (buf *TextBlobBuilderRunBuffer) Pos(count int) []Point {
+	return unsafe.Slice((*Point)(buf.pos), count)
 }

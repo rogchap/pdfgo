@@ -31,9 +31,23 @@ func (f *FontMgr) MatchFamily(familyName string) *Typeface {
 		ptr, _ := syscall.BytePtrFromString(familyName)
 		sPtr = (*C.char)(unsafe.Pointer(ptr))
 	}
-	return &Typeface{
-		handle: C.sk_fontmgr_match_family_style(f.handle, sPtr, FontStyleNormal.handle),
+
+	match := C.sk_fontmgr_match_family_style(f.handle, sPtr, FontStyleNormal.handle)
+	if match == nil {
+		return nil
 	}
+
+	return &Typeface{match}
+}
+
+func (f *FontMgr) CreateFromFile(path string, idx int) *Typeface {
+	ptr, _ := syscall.BytePtrFromString(path)
+	cptr := (*C.char)(unsafe.Pointer(ptr))
+	tf := C.sk_fontmgr_create_from_file(f.handle, cptr, C.int(idx))
+	if tf == nil {
+		return nil
+	}
+	return &Typeface{tf}
 }
 
 // font style

@@ -17,6 +17,10 @@ sk_typeface_t* sk_fontmgr_match_family_style(sk_fontmgr_t* fontmgr, const char* 
     return ToTypeface(AsFontMgr(fontmgr)->matchFamilyStyle(familyName, *AsFontStyle(style)).release());
 }
 
+sk_typeface_t* sk_fontmgr_create_from_file(sk_fontmgr_t* fontmgr, const char* path, int index) {
+    return ToTypeface(AsFontMgr(fontmgr)->makeFromFile(path, index).release());
+}
+
 // font style
 sk_fontstyle_t* sk_fontstyle_new(int weight, int width, sk_font_style_slant_t slant) {
     return ToFontStyle(new SkFontStyle(weight, width,(SkFontStyle::Slant)slant));

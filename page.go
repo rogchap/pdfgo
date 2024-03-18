@@ -3,8 +3,8 @@ package pdf
 type Page struct {
 	s *size
 
-	// background element
-	// foreground element
+	background drawable
+	foreground drawable
 
 	// header  element
 	content drawable
@@ -20,13 +20,11 @@ func (p *Page) PageSize(s size) {
 }
 
 func (p *Page) build(c *container) {
-	c.child = p.content
-
-	// c.layers(func(ls *layers) {
-	// 	ls.layer(false).child = p.background
-	// 	ls.layer(true).child = p.content // TODO change to header/content/footer
-	// 	ls.layer(false).child = p.foreground
-	// })
+	c.Layers(func(layers *Layers) {
+		layers.Layer(false).Element(p.background)
+		layers.Layer(true).Element(p.content) // TODO change to header/content/footer
+		layers.Layer(false).Element(p.foreground)
+	})
 }
 
 func (p *Page) Content() *Container {

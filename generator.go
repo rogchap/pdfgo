@@ -33,7 +33,7 @@ func Generate(w io.Writer, doc Document) {
 		sp.size = pageSizeA4
 
 		skdoc.beginPage(sp)
-		content.draw(sp)
+		content.draw(sp.size)
 		skdoc.endPage()
 
 		if sp.pType == full {

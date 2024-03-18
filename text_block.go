@@ -1,8 +1,6 @@
 package pdf
 
 import (
-	"fmt"
-
 	"rogchap.com/pdf/internal/skia"
 )
 
@@ -30,14 +28,10 @@ type messureResult struct {
 }
 
 func (ts *TextSpan) draw(skcanvas *skia.Canvas, startIdx, endIdx int) {
-	fmt.Printf("startIdx: %v, endIdx: %v\n", startIdx, endIdx)
-
 	glyphsToDraw := ts.glyphs[startIdx : endIdx+1]
 	if len(glyphsToDraw) == 0 {
 		return
 	}
-
-	fmt.Printf("text: %v all: %v todraw: %v\n", len([]rune(ts.text)), len(ts.glyphs), len(glyphsToDraw))
 
 	runs := make(map[*textRun][]*shapedGlyph)
 
@@ -53,9 +47,6 @@ func (ts *TextSpan) draw(skcanvas *skia.Canvas, startIdx, endIdx int) {
 		skfont.SetSize(run.size)
 
 		count := len(glyphs)
-
-		fmt.Println("run count:", count)
-
 		runbuf := builder.AllocPosRun(skfont, count)
 		tbg := runbuf.Glyphs(count)
 		tbp := runbuf.Pos(count)
@@ -192,12 +183,35 @@ func (tb *TextBlock) messure(available size) sizePlan {
 		return sizePlan{}
 	}
 
-	return sizePlan{}
-	// panic("")
+	// TODO: We should cache mesurements as we do this twice; once for messure and again for draw
+	// In a lot of cases the values in both will be the same (unless we have to go over multiple pages
+	lines := tb.splitIntoLines(available.width, available.height)
+	if len(lines) == 0 {
+		return sizePlan{
+			pType: wrap,
+		}
+	}
+
+	var width, height float32
+	for _, line := range lines {
+		if line.width > width {
+			width = line.width
+		}
+		height += line.lineHeight
+	}
+
+	// TODO: Check if all items have fully rendered; if not return partial plan type
+
+	return sizePlan{
+		size: size{
+			width:  width,
+			height: height,
+		},
+	}
 }
 
-func (tb *TextBlock) draw(sp sizePlan) {
-	lines := tb.splitIntoLines(sp.size.width, sp.size.height)
+func (tb *TextBlock) draw(available size) {
+	lines := tb.splitIntoLines(available.width, available.height)
 
 	var topOffset float32
 	for _, line := range lines {
@@ -283,6 +297,7 @@ func (tb *TextBlock) splitIntoLines(availableWidth, availableHeight float32) []t
 			return lines
 		}
 
+		var width float32
 		var textHeight, lineHeight float32
 		var ascent, descent float32
 		for _, item := range line {
@@ -298,11 +313,13 @@ func (tb *TextBlock) splitIntoLines(availableWidth, availableHeight float32) []t
 			if item.messurement.descent < descent {
 				descent = item.messurement.descent
 			}
+			width += item.messurement.width
 		}
 
 		lines = append(lines, textLine{
 			elements: line,
 
+			width:      width,
 			textHeight: textHeight,
 			lineHeight: lineHeight,
 

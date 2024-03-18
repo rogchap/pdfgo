@@ -17,6 +17,6 @@ type sizePlan struct {
 	pType sizePlanType
 }
 
-var maxSize = size{10_000, 10_000} // is this big enough? don't want it to be too big
+var maxSize = size{100_000, 100_000} // is this big enough? don't want it to be too big
 
 var pageSizeA4 = size{2384.2, 3370.8}

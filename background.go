@@ -17,13 +17,13 @@ func (b *background) messure(available size) sizePlan {
 	return sizePlan{}
 }
 
-func (b *background) draw(sp sizePlan) {
+func (b *background) draw(available size) {
 	// TODO: Change to real paint
 	p := skia.NewPaint(0xFF, 0xF3, 0xE2, 0xD3)
-	r := skia.NewRect(0, 0, sp.size.width, sp.size.height)
+	r := skia.NewRect(0, 0, available.width, available.height)
 	b.skdoc.canvas.DrawRect(&r, p)
 
 	if b.child != nil {
-		b.child.draw(sp)
+		b.child.draw(available)
 	}
 }

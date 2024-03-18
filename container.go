@@ -1,7 +1,5 @@
 package pdf
 
-import "fmt"
-
 type Container = container
 
 type container struct {
@@ -21,12 +19,11 @@ func (c *container) messure(available size) sizePlan {
 	return c.child.messure(available)
 }
 
-func (c *container) draw(sp sizePlan) {
-	fmt.Printf("%#v\n", c.child)
+func (c *container) draw(available size) {
 	if c.child == nil {
 		return
 	}
-	c.child.draw(sp)
+	c.child.draw(available)
 }
 
 // func (c *container) layers(cb func(ls *layers)) {
@@ -35,6 +32,10 @@ func (c *container) draw(sp sizePlan) {
 // 	// c.child = ls
 // }
 
+func (c *container) Element(el drawable) {
+	c.child = el
+}
+
 func (c *container) Background(color string) *Container {
 	b := &background{
 		color: color,
@@ -42,6 +43,24 @@ func (c *container) Background(color string) *Container {
 	c.child = b
 
 	return &b.container
+}
+
+func (c *container) Layers(cb func(layers *Layers)) {
+	ls := &Layers{}
+	cb(ls)
+	c.child = ls
+}
+
+func (c *container) VStack(cb func(stack *VStack)) {
+	s := &vStack{}
+	cb(s)
+	c.child = s
+}
+
+func (c *container) HStack(cb func(stack *HStack)) {
+	s := &hStack{}
+	cb(s)
+	c.child = s
 }
 
 func (c *container) Text(cb func(text *TextBlock)) {

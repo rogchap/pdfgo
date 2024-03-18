@@ -1,17 +1,23 @@
 package pdf
 
-type layer struct {
+type Layer struct {
 	container
 
 	isMain bool
 }
 
-type layers struct {
-	children []*layer
+type Layers struct {
+	element
+
+	items []*Layer
 }
 
-func (ls *layers) messure(available size) sizePlan {
-	for _, l := range ls.children {
+func (ls *Layers) children() []drawable {
+	return asDrawable(ls.items)
+}
+
+func (ls *Layers) messure(available size) sizePlan {
+	for _, l := range ls.items {
 		if l.isMain {
 			return l.messure(available)
 		}
@@ -20,9 +26,9 @@ func (ls *layers) messure(available size) sizePlan {
 	panic("No main layer defined")
 }
 
-func (ls *layers) draw(available sizePlan) {
-	for _, l := range ls.children {
-		m := l.messure(available.size)
+func (ls *Layers) draw(available size) {
+	for _, l := range ls.items {
+		m := l.messure(available)
 		if m.pType == wrap {
 			continue
 		}
@@ -30,13 +36,14 @@ func (ls *layers) draw(available sizePlan) {
 	}
 }
 
-func (ls *layers) layer(main bool) *container {
+func (ls *Layers) Layer(main bool) *Container {
 	c := &container{}
 
-	l := layer{
+	l := Layer{
 		isMain: main,
 	}
 	l.child = c
+	ls.items = append(ls.items, &l)
 
 	return c
 }

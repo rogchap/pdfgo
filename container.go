@@ -1,6 +1,16 @@
 package pdf
 
-type Container = container
+type Container interface {
+	Element(el drawable)
+	Background(color string) Container
+	Padding(left, top, right, bottom float32) Container
+	Fixed(width, height float32) Container
+
+	Layers(cb func(layers *Layers))
+	VStack(cb func(stack *VStack))
+	HStack(cb func(stack *HStack))
+	Text(cb func(text *TextBlock))
+}
 
 type container struct {
 	element
@@ -36,16 +46,16 @@ func (c *container) Element(el drawable) {
 	c.child = el
 }
 
-func (c *container) Background(color string) *Container {
+func (c *container) Background(color string) Container {
 	b := &background{
 		color: color,
 	}
 	c.child = b
 
-	return &b.container
+	return b
 }
 
-func (c *container) Padding(left, top, right, bottom float32) *Container {
+func (c *container) Padding(left, top, right, bottom float32) Container {
 	if left == 0 && top == 0 && right == 0 && bottom == 0 {
 		// no need to add a padding container
 		return c
@@ -59,7 +69,17 @@ func (c *container) Padding(left, top, right, bottom float32) *Container {
 	}
 	c.child = p
 
-	return &p.container
+	return p
+}
+
+func (c *container) Fixed(width, height float32) Container {
+	f := &fixedContainer{
+		width:  width,
+		height: height,
+	}
+	c.child = f
+
+	return f
 }
 
 func (c *container) Layers(cb func(layers *Layers)) {

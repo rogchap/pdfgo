@@ -12,7 +12,7 @@ type testDoc struct{}
 
 func (d *testDoc) Build(c *pdf.DocContainer) {
 	c.Page(func(page *pdf.Page) {
-		page.Size(400, 600)
+		// page.PageSize(pdf.PageSizeA4Landscape)
 		page.MarginV(200)
 		page.MarginH(75)
 		page.Content().

@@ -27,10 +27,6 @@ func Generate(w io.Writer, doc Document) {
 	for {
 		pctx.Inc()
 		sp := content.messure(maxSize)
-		// TODO: check if plan is wrap and then panic
-
-		// TODO: Temp fix until we do proper page messuring
-		sp.size = pageSizeA4
 
 		skdoc.beginPage(sp)
 		content.draw(sp.size)

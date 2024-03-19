@@ -27,6 +27,10 @@ func (v *vStack) messure(available size) sizePlan {
 }
 
 func (v *vStack) draw(available size) {
+	if len(v.items) == 0 {
+		return
+	}
+
 	layouts := v.layout(available)
 
 	for _, layout := range layouts {
@@ -39,10 +43,10 @@ func (v *vStack) draw(available size) {
 	}
 }
 
-func (v *vStack) Item() *Container {
+func (v *vStack) Item() Container {
 	item := &vStackItem{}
 	v.items = append(v.items, item)
-	return &item.container
+	return item
 }
 
 type vStackLayout struct {

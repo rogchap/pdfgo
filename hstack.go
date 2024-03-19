@@ -25,10 +25,10 @@ type hStack struct {
 	items []*hStackItem
 }
 
-func (h *hStack) Item() *Container {
+func (h *hStack) Item() Container {
 	item := &hStackItem{}
 	h.items = append(h.items, item)
-	return &item.container
+	return item
 }
 
 func (h *hStack) children() []drawable {

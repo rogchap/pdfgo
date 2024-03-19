@@ -36,7 +36,7 @@ func (ls *Layers) draw(available size) {
 	}
 }
 
-func (ls *Layers) Layer(main bool) *Container {
+func (ls *Layers) Layer(main bool) Container {
 	c := &container{}
 
 	l := Layer{

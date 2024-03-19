@@ -45,6 +45,18 @@ func (c *container) Background(color string) *Container {
 	return &b.container
 }
 
+func (c *container) Padding(left, top, right, bottom float32) *Container {
+	p := &padding{
+		left:   left,
+		top:    top,
+		right:  right,
+		bottom: bottom,
+	}
+	c.child = p
+
+	return &p.container
+}
+
 func (c *container) Layers(cb func(layers *Layers)) {
 	ls := &Layers{}
 	cb(ls)

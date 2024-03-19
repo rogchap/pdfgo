@@ -3,6 +3,11 @@ package pdf
 type Page struct {
 	s *size
 
+	marginLeft   float32
+	marginTop    float32
+	marginRight  float32
+	marginBottom float32
+
 	background drawable
 	foreground drawable
 
@@ -19,10 +24,38 @@ func (p *Page) PageSize(s size) {
 	p.s = &s
 }
 
+func (p *Page) Margin(left, top, right, bottom float32) {
+	p.marginLeft = left
+	p.marginRight = right
+	p.marginTop = top
+	p.marginBottom = bottom
+}
+
+func (p *Page) MarginVH(v float32) {
+	p.marginLeft = v
+	p.marginRight = v
+	p.marginTop = v
+	p.marginBottom = v
+}
+
+func (p *Page) MarginV(v float32) {
+	p.marginTop = v
+	p.marginBottom = v
+}
+
+func (p *Page) MarginH(v float32) {
+	p.marginLeft = v
+	p.marginRight = v
+}
+
 func (p *Page) build(c *container) {
 	c.Layers(func(layers *Layers) {
 		layers.Layer(false).Element(p.background)
-		layers.Layer(true).Element(p.content) // TODO change to header/content/footer
+
+		layers.Layer(true).
+			Padding(p.marginLeft, p.marginTop, p.marginRight, p.marginBottom).
+			Element(p.content) // TODO change to header/content/footer
+
 		layers.Layer(false).Element(p.foreground)
 	})
 }

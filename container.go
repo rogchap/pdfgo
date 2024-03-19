@@ -46,6 +46,11 @@ func (c *container) Background(color string) *Container {
 }
 
 func (c *container) Padding(left, top, right, bottom float32) *Container {
+	if left == 0 && top == 0 && right == 0 && bottom == 0 {
+		// no need to add a padding container
+		return c
+	}
+
 	p := &padding{
 		left:   left,
 		top:    top,

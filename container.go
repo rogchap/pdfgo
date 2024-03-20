@@ -9,7 +9,8 @@ type Container interface {
 	Layers(cb func(layers *Layers))
 	VStack(cb func(stack *VStack))
 	HStack(cb func(stack *HStack))
-	Text(cb func(text *TextBlock))
+	Text(s string) *TextSpan
+	TextBlock(cb func(text *TextBlock))
 }
 
 type container struct {
@@ -100,7 +101,14 @@ func (c *container) HStack(cb func(stack *HStack)) {
 	c.child = s
 }
 
-func (c *container) Text(cb func(text *TextBlock)) {
+func (c *container) Text(s string) *TextSpan {
+	tb := &TextBlock{}
+	span := tb.Span(s)
+	c.child = tb
+	return span
+}
+
+func (c *container) TextBlock(cb func(text *TextBlock)) {
 	tb := &TextBlock{}
 	cb(tb)
 	c.child = tb

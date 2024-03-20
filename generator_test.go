@@ -15,11 +15,9 @@ func (d *testDoc) Build(c *pdf.DocContainer) {
 		// page.PageSize(pdf.PageSizeA4Landscape)
 		page.MarginV(200)
 		page.MarginH(75)
+
 		page.Content().
-			Background("#40f").
-			Text(func(text *pdf.TextBlock) {
-				text.Span(textCopy).FontSize(54)
-			})
+			Text(textCopy).FontSize(54)
 		// VStack(func(stack *pdf.VStack) {
 		// 	stack.Item().HStack(func(stack *pdf.HStack) {
 		// 		stack.Item().Text(func(text *pdf.TextBlock) {

@@ -3,6 +3,8 @@ package pdf
 type Page struct {
 	s *size
 
+	color string
+
 	marginLeft   float32
 	marginTop    float32
 	marginRight  float32
@@ -48,6 +50,10 @@ func (p *Page) MarginH(v float32) {
 	p.marginRight = v
 }
 
+func (p *Page) Color(v string) {
+	p.color = v
+}
+
 func (p *Page) build(c *container) {
 	c.Layers(func(layers *Layers) {
 		layers.Layer(false).Element(p.background)
@@ -59,6 +65,7 @@ func (p *Page) build(c *container) {
 
 		layers.Layer(true).
 			Fixed(p.s.width, p.s.height).
+			Background(p.color).
 			Padding(p.marginLeft, p.marginTop, p.marginRight, p.marginBottom).
 			Element(p.content) // TODO change to header/content/footer
 

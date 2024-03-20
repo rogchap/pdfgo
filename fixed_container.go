@@ -15,8 +15,6 @@ func (f *fixedContainer) messure(available size) sizePlan {
 		height = available.height
 	}
 
-	// TODO: we need to check that the container can fit
-
 	return sizePlan{size: size{width, height}}
 }
 

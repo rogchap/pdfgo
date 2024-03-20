@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-text/typesetting/font"
 	"github.com/go-text/typesetting/fontscan"
-	"rogchap.com/pdf/internal/skia"
+	"rogchap.com/skia"
 )
 
 type nilLogger struct{}

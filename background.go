@@ -1,7 +1,7 @@
 package pdf
 
 import (
-	"rogchap.com/pdf/internal/skia"
+	"rogchap.com/skia"
 )
 
 type background struct {

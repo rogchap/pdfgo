@@ -4,7 +4,7 @@ import (
 	"github.com/go-text/typesetting/font"
 	"github.com/go-text/typesetting/shaping"
 	"golang.org/x/image/math/fixed"
-	"rogchap.com/pdf/internal/skia"
+	"rogchap.com/skia"
 )
 
 type textRun struct {

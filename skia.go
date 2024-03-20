@@ -3,7 +3,7 @@ package pdf
 import (
 	"io"
 
-	"rogchap.com/pdf/internal/skia"
+	"rogchap.com/skia"
 )
 
 type skiaDoc struct {

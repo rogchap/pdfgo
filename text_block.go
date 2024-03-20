@@ -1,6 +1,8 @@
 package pdf
 
 import (
+	"image/color"
+
 	"rogchap.com/skia"
 )
 
@@ -58,7 +60,7 @@ func (ts *TextSpan) draw(skcanvas *skia.Canvas, startIdx, endIdx int) {
 	}
 
 	// TODO paint should be from TextStyle
-	p := skia.NewPaint(0xFF, 0, 0, 0)
+	p := skia.NewPaint(color.RGBA{0, 0, 0, 0xff})
 
 	xOffset := glyphsToDraw[0].position.X()
 	skcanvas.DrawText(builder.Make(), -xOffset, 0, p)

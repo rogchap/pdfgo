@@ -1,7 +1,5 @@
 package pdf
 
-import "fmt"
-
 type Page struct {
 	s *size
 
@@ -58,8 +56,6 @@ func (p *Page) build(c *container) {
 		if p.s == nil {
 			p.s = &defaultSize
 		}
-
-		fmt.Printf("%#v\n", p.s)
 
 		layers.Layer(true).
 			Fixed(p.s.width, p.s.height).

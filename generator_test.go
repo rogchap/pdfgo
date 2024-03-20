@@ -16,7 +16,7 @@ func (d *testDoc) Build(c *pdf.DocContainer) {
 		page.MarginV(200)
 		page.MarginH(75)
 		page.Content().
-			Background("green").
+			Background("#40f").
 			Text(func(text *pdf.TextBlock) {
 				text.Span(textCopy).FontSize(54)
 			})

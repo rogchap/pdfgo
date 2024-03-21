@@ -19,12 +19,21 @@ func (c *DocContainer) build() *container {
 		return nil
 	}
 
-	container := &container{}
+	cont := &container{}
 	if len(c.pages) == 1 {
-		c.pages[0].build(container)
-		return container
+		c.pages[0].build(cont)
+		return cont
 	}
 
-	// TODO: Render column with page breaks
-	panic("multiple pages not supported yet")
+	cont.VStack(func(stack *VStack) {
+		for idx, page := range c.pages {
+			if idx != 0 {
+				stack.Item().PageBreak()
+			}
+			pageCont := &container{}
+			page.build(pageCont)
+			stack.Item().Element(pageCont)
+		}
+	})
+	return cont
 }

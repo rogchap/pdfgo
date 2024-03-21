@@ -8,6 +8,10 @@ type drawable interface {
 	setSkDoc(skdoc *skiaDoc)
 }
 
+type resetable interface {
+	reset()
+}
+
 func asDrawable[T drawable](s []T) []drawable {
 	rtn := make([]drawable, len(s))
 	for i := range s {

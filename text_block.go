@@ -131,7 +131,6 @@ func (ts *TextSpan) messure(startIdx int, availableWidth float32) *messureResult
 		}
 	}
 
-	// TODO: is this the line bounds gap?
 	lineHeight := ts.style.LineHeight
 	if lineHeight < 1 {
 		lineHeight = 1
@@ -168,6 +167,7 @@ type TextBlock struct {
 	element
 
 	items          []*TextSpan
+	renderQueue    []*TextSpan
 	currentItemIdx int
 }
 
@@ -180,14 +180,24 @@ func (tb *TextBlock) Span(text string) *TextSpan {
 	return ts
 }
 
+func (tb *TextBlock) reset() {
+	tb.currentItemIdx = 0
+	tb.renderQueue = nil
+
+	for _, item := range tb.items {
+		tb.renderQueue = append(tb.renderQueue, item)
+	}
+}
+
 func (tb *TextBlock) messure(available size) sizePlan {
-	if len(tb.items) == 0 {
+	if len(tb.renderQueue) == 0 {
 		return sizePlan{}
 	}
 
-	// TODO: We should cache mesurements as we do this twice; once for messure and again for draw
+	// TODO: We should cache mesurements as we do this twice, trice ... maybe more; once for messure and again for draw
 	// In a lot of cases the values in both will be the same (unless we have to go over multiple pages
 	lines := tb.splitIntoLines(available.width, available.height)
+
 	if len(lines) == 0 {
 		return sizePlan{
 			pType: wrap,
@@ -202,7 +212,28 @@ func (tb *TextBlock) messure(available size) sizePlan {
 		height += line.lineHeight
 	}
 
-	// TODO: Check if all items have fully rendered; if not return partial plan type
+	if width > available.width || height > available.height {
+		return sizePlan{pType: wrap}
+	}
+
+	var willRenderCount int
+	for _, line := range lines {
+		for _, el := range line.elements {
+			if el.messurement.endIdx == el.messurement.totalIdx {
+				willRenderCount++
+			}
+		}
+	}
+
+	if willRenderCount != len(tb.renderQueue) {
+		return sizePlan{
+			pType: partial,
+			size: size{
+				width:  width,
+				height: height,
+			},
+		}
+	}
 
 	return sizePlan{
 		size: size{
@@ -214,6 +245,10 @@ func (tb *TextBlock) messure(available size) sizePlan {
 
 func (tb *TextBlock) draw(available size) {
 	lines := tb.splitIntoLines(available.width, available.height)
+
+	if len(lines) == 0 {
+		return
+	}
 
 	var topOffset float32
 	for _, line := range lines {
@@ -229,6 +264,26 @@ func (tb *TextBlock) draw(available size) {
 		}
 
 		topOffset += line.lineHeight
+	}
+
+	for _, line := range lines {
+		for _, el := range line.elements {
+			if el.messurement.endIdx == el.messurement.totalIdx {
+				tb.renderQueue = tb.renderQueue[1:]
+			}
+		}
+	}
+
+	lastLine := lines[len(lines)-1]
+	lastEl := lastLine.elements[len(lastLine.elements)-1]
+	tb.currentItemIdx = lastEl.messurement.nextIdx
+
+	if lastEl.messurement.endIdx == lastEl.messurement.totalIdx {
+		tb.currentItemIdx = 0
+	}
+
+	if len(tb.renderQueue) == 0 {
+		tb.reset()
 	}
 }
 
@@ -250,10 +305,9 @@ type textLine struct {
 func (tb *TextBlock) splitIntoLines(availableWidth, availableHeight float32) []textLine {
 	var lines []textLine
 
-	var queue []*TextSpan
-	for _, item := range tb.items {
-		queue = append(queue, item)
-	}
+	queue := make([]*TextSpan, len(tb.renderQueue))
+	copy(queue, tb.renderQueue)
+
 	currentItemIdx := tb.currentItemIdx
 
 	nextLine := func() []lineElement {
@@ -290,7 +344,7 @@ func (tb *TextBlock) splitIntoLines(availableWidth, availableHeight float32) []t
 		return lineElements
 	}
 
-	// var currentHeight float32
+	var currentHeight float32
 
 	for len(queue) > 0 {
 		line := nextLine()
@@ -317,6 +371,12 @@ func (tb *TextBlock) splitIntoLines(availableWidth, availableHeight float32) []t
 			}
 			width += item.messurement.width
 		}
+
+		if currentHeight+lineHeight > availableHeight {
+			break
+		}
+
+		currentHeight += lineHeight
 
 		lines = append(lines, textLine{
 			elements: line,

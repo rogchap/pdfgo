@@ -1,5 +1,24 @@
 package pdf
 
+type pageBreak struct {
+	element
+
+	rendered bool
+}
+
+func (p *pageBreak) messure(available size) sizePlan {
+	if p.rendered {
+		return sizePlan{}
+	}
+	return sizePlan{
+		pType: partial,
+	}
+}
+
+func (p *pageBreak) draw(available size) {
+	p.rendered = true
+}
+
 type Page struct {
 	s *size
 

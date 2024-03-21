@@ -11,6 +11,7 @@ type Container interface {
 	HStack(cb func(stack *HStack))
 	Text(s string) *TextSpan
 	TextBlock(cb func(text *TextBlock))
+	PageBreak()
 }
 
 type container struct {
@@ -112,4 +113,8 @@ func (c *container) TextBlock(cb func(text *TextBlock)) {
 	tb := &TextBlock{}
 	cb(tb)
 	c.child = tb
+}
+
+func (c *container) PageBreak() {
+	c.child = &pageBreak{}
 }

@@ -19,7 +19,8 @@ func (ls *Layers) children() []drawable {
 func (ls *Layers) messure(available size) sizePlan {
 	for _, l := range ls.items {
 		if l.isMain {
-			return l.messure(available)
+			m := l.messure(available)
+			return m
 		}
 	}
 

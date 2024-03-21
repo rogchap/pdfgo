@@ -15,7 +15,19 @@ func (f *fixedContainer) messure(available size) sizePlan {
 		height = available.height
 	}
 
-	return sizePlan{size: size{width, height}}
+	m := f.container.messure(size{width, height})
+
+	if m.pType == wrap {
+		return sizePlan{pType: wrap}
+	}
+
+	s := size{width, height}
+
+	if m.pType == partial {
+		return sizePlan{pType: partial, size: s}
+	}
+
+	return sizePlan{size: s}
 }
 
 func (f *fixedContainer) draw(available size) {

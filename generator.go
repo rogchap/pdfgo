@@ -22,6 +22,10 @@ func Generate(w io.Writer, doc Document) {
 
 		el.setSkDoc(skdoc)
 		// TODO: set page context
+
+		if el, ok := el.(resetable); ok {
+			el.reset()
+		}
 	})
 
 	for {
@@ -36,8 +40,6 @@ func Generate(w io.Writer, doc Document) {
 			break
 		}
 	}
-
-	// TODO: messure Space Plan to deal with wrapping content
 
 	skdoc.endDoc()
 }

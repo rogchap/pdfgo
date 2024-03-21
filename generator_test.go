@@ -19,6 +19,8 @@ func (d *testDoc) Build(c *pdf.DocContainer) {
 		page.Content().
 			// Background("#020").
 			VStack(func(stack *pdf.VStack) {
+				stack.Space(50)
+
 				stack.Item().Text(textCopy).FontSize(24)
 				stack.Item().Text(textCopy).FontSize(34)
 				stack.Item().Text(textCopy).FontSize(44)
@@ -33,20 +35,14 @@ func (d *testDoc) Build(c *pdf.DocContainer) {
 				stack.Item().Text(textCopy).FontSize(54)
 				stack.Item().Text(textCopy).FontSize(54)
 				stack.Item().Text(textCopy).FontSize(54)
-
-				// 	stack.Item().HStack(func(stack *pdf.HStack) {
-				// 		stack.Item().Text(func(text *pdf.TextBlock) {
-				// 			text.Span("One")
-				// 		})
-				// 		stack.Item().Text(func(text *pdf.TextBlock) {
-				// 			text.Span("Two")
-				// 		})
-				// 	})
 			})
 	})
 	c.Page(func(page *pdf.Page) {
 		page.PageSize(pdf.PageSizeA4Landscape)
-		page.Content().Text("Page 2")
+		page.Content().HStack(func(hstack *pdf.HStack) {
+			hstack.Item().Text(textCopy)
+			hstack.Item().Text(textCopy)
+		})
 	})
 }
 

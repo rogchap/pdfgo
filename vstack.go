@@ -11,7 +11,12 @@ type VStack = vStack
 type vStack struct {
 	element
 
+	space float32
 	items []*vStackItem
+}
+
+func (v *vStack) Space(s float32) {
+	v.space = s
 }
 
 func (v *vStack) children() []drawable {
@@ -119,6 +124,10 @@ func (v *vStack) layout(available size) []vStackLayout {
 			break
 		}
 
+		if topOffset > 0 && m.size.width == 0 && m.size.height == 0 {
+			topOffset -= v.space
+		}
+
 		layouts = append(layouts, vStackLayout{
 			item:    item,
 			size:    m.size,
@@ -134,7 +143,7 @@ func (v *vStack) layout(available size) []vStackLayout {
 			break
 		}
 
-		topOffset += m.size.height
+		topOffset += m.size.height + v.space
 	}
 
 	for _, l := range layouts {

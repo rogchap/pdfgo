@@ -12,6 +12,7 @@ type Container interface {
 	Text(s string) *TextSpan
 	TextBlock(cb func(text *TextBlock))
 	PageBreak()
+	ImageFile(path string) *Image
 }
 
 type container struct {
@@ -117,4 +118,10 @@ func (c *container) TextBlock(cb func(text *TextBlock)) {
 
 func (c *container) PageBreak() {
 	c.child = &pageBreak{}
+}
+
+func (c *container) ImageFile(path string) *Image {
+	i := newImageFromFile(path)
+	c.child = i
+	return i
 }

@@ -21,6 +21,7 @@ func (d *testDoc) Build(c *pdf.DocContainer) {
 			VStack(func(stack *pdf.VStack) {
 				stack.Space(50)
 
+				stack.Item().ImageFile("testdata/park1.jpg")
 				stack.Item().Text(textCopy).FontSize(24)
 				stack.Item().Text(textCopy).FontSize(34)
 				stack.Item().Text(textCopy).FontSize(44)
@@ -32,6 +33,7 @@ func (d *testDoc) Build(c *pdf.DocContainer) {
 				stack.Item().Text(textCopy).FontSize(64)
 				stack.Item().Text(textCopy).FontSize(54)
 				stack.Item().Text(textCopy).FontSize(54)
+				stack.Item().ImageFile("testdata/park2.jpg")
 				stack.Item().Text(textCopy).FontSize(54)
 				stack.Item().Text(textCopy).FontSize(54)
 				stack.Item().Text(textCopy).FontSize(54)

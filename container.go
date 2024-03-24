@@ -5,6 +5,8 @@ type Container interface {
 	Background(color string) Container
 	Padding(left, top, right, bottom float32) Container
 	Fixed(width, height float32) Container
+	AlignCenter() Container
+	AlignRight() Container
 
 	Layers(cb func(layers *Layers))
 	VStack(cb func(vstack *VStack))
@@ -83,6 +85,24 @@ func (c *container) Fixed(width, height float32) Container {
 	c.child = f
 
 	return f
+}
+
+func (c *container) AlignCenter() Container {
+	a := &alignment{
+		align: alignCenter,
+	}
+	c.child = a
+
+	return a
+}
+
+func (c *container) AlignRight() Container {
+	a := &alignment{
+		align: alignRight,
+	}
+	c.child = a
+
+	return a
 }
 
 func (c *container) Layers(cb func(layers *Layers)) {

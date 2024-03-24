@@ -27,8 +27,8 @@ func (d *testDoc) Build(c *pdf.DocContainer) {
 
 				stack.Item().HStack(func(hstack *pdf.HStack) {
 					hstack.RelativeItem(1).ImageFile("testdata/park1.jpg")
-					hstack.RelativeItem(1).ImageFile("testdata/park2.jpg")
-					hstack.RelativeItem(1).ImageFile("testdata/park3.jpg")
+					hstack.RelativeItem(1).AlignCenter().ImageFile("testdata/park2.jpg")
+					hstack.RelativeItem(1).AlignRight().ImageFile("testdata/park3.jpg")
 				})
 
 				stack.Item().Text(textCopy).FontSize(54)
@@ -39,7 +39,7 @@ func (d *testDoc) Build(c *pdf.DocContainer) {
 				stack.Item().Text(textCopy).FontSize(64)
 				stack.Item().Text(textCopy).FontSize(54)
 				stack.Item().Text(textCopy).FontSize(54)
-				stack.Item().ImageFile("testdata/park4.jpg")
+				stack.Item().AlignCenter().ImageFile("testdata/park4.jpg")
 				stack.Item().Text(textCopy).FontSize(54)
 				stack.Item().Text(textCopy).FontSize(54)
 				stack.Item().Text(textCopy).FontSize(54)

@@ -82,10 +82,11 @@ func (p *Page) build(c *container) {
 			p.s = &defaultSize
 		}
 
-		layers.Layer(true).
-			Fixed(p.s.width, p.s.height).
-			Background(p.color).
-			Padding(p.marginLeft, p.marginTop, p.marginRight, p.marginBottom).
+		mainLayer := layers.Layer(true).Fixed(p.s.width, p.s.height)
+		if p.color != "" {
+			mainLayer.Background(p.color)
+		}
+		mainLayer.Padding(p.marginLeft, p.marginTop, p.marginRight, p.marginBottom).
 			Element(p.content) // TODO change to header/content/footer
 
 		layers.Layer(false).Element(p.foreground)
@@ -95,5 +96,17 @@ func (p *Page) build(c *container) {
 func (p *Page) Content() Container {
 	c := &container{}
 	p.content = c
+	return c
+}
+
+func (p *Page) Background() Container {
+	c := &container{}
+	p.background = c
+	return c
+}
+
+func (p *Page) Foreground() Container {
+	c := &container{}
+	p.foreground = c
 	return c
 }

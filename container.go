@@ -7,8 +7,8 @@ type Container interface {
 	Fixed(width, height float32) Container
 
 	Layers(cb func(layers *Layers))
-	VStack(cb func(stack *VStack))
-	HStack(cb func(stack *HStack))
+	VStack(cb func(vstack *VStack))
+	HStack(cb func(hstack *HStack))
 	Text(s string) *TextSpan
 	TextBlock(cb func(text *TextBlock))
 	PageBreak()
@@ -91,13 +91,13 @@ func (c *container) Layers(cb func(layers *Layers)) {
 	c.child = ls
 }
 
-func (c *container) VStack(cb func(stack *VStack)) {
+func (c *container) VStack(cb func(vstack *VStack)) {
 	s := &vStack{}
 	cb(s)
 	c.child = s
 }
 
-func (c *container) HStack(cb func(stack *HStack)) {
+func (c *container) HStack(cb func(hstack *HStack)) {
 	s := &hStack{}
 	cb(s)
 	c.child = s

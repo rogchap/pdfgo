@@ -1,5 +1,7 @@
 package pdf
 
+import "fmt"
+
 type hStackPosType int
 
 const (
@@ -22,11 +24,22 @@ type HStack = hStack
 type hStack struct {
 	element
 
+	space float32
 	items []*hStackItem
 }
 
-func (h *hStack) Item() Container {
-	item := &hStackItem{}
+func (h *hStack) Space(s float32) {
+	h.space = s
+}
+
+func (h *hStack) RelativeItem(size float32) Container {
+	if size < 1 {
+		size = 1
+	}
+	item := &hStackItem{
+		position: posRelative,
+		width:    size,
+	}
 	h.items = append(h.items, item)
 	return item
 }
@@ -39,8 +52,38 @@ func (h *hStack) messure(available size) sizePlan {
 	if len(h.items) == 0 {
 		return sizePlan{}
 	}
-	// TODO: messure for partial or wrap rendering
-	return sizePlan{}
+
+	h.calcItemWidths(available.width)
+	layouts := h.layout(available)
+
+	lastLayout := layouts[len(layouts)-1]
+	width := lastLayout.xOffset + lastLayout.size.width
+	var height float32
+	for _, layout := range layouts {
+
+		if layout.ptype == wrap {
+			return sizePlan{pType: wrap}
+		}
+
+		if layout.size.height > height {
+			height = layout.size.height
+		}
+	}
+
+	if width > available.width || height > available.height {
+		return sizePlan{pType: wrap}
+	}
+
+	fmt.Printf("%#v\n", height)
+
+	s := size{width, height}
+	for _, layout := range layouts {
+		if !layout.item.rendered && layout.ptype == partial {
+			return sizePlan{pType: partial, size: s}
+		}
+	}
+
+	return sizePlan{size: s}
 }
 
 func (h *hStack) draw(available size) {
@@ -63,8 +106,6 @@ func (h *hStack) calcItemWidths(availableWidth float32) {
 		if item.position == posAuto {
 			m := item.messure(maxSize)
 			item.width = m.size.width
-			// fmt.Printf("%#v\n", item.width)
-
 		}
 	}
 	var fixedWidth, relWidth float32
@@ -76,15 +117,15 @@ func (h *hStack) calcItemWidths(availableWidth float32) {
 			relWidth += item.width
 		}
 	}
-
-	relPercent := (availableWidth - fixedWidth) / relWidth
+	spacing := float32(len(h.items)-1) * h.space
+	relPercent := (availableWidth - fixedWidth - spacing) / relWidth
 
 	for _, item := range h.items {
 		if item.position != posRelative {
 			item.calcWidth = item.width
 		}
 
-		if relWidth >= 0 {
+		if relWidth <= 0 {
 			continue
 		}
 
@@ -98,6 +139,7 @@ type hStackLayout struct {
 	item    *hStackItem
 	size    size
 	xOffset float32
+	ptype   sizePlanType
 }
 
 func (h *hStack) layout(available size) []hStackLayout {
@@ -109,13 +151,14 @@ func (h *hStack) layout(available size) []hStackLayout {
 			continue
 		}
 
+		m := item.messure(size{item.calcWidth, available.height})
 		layouts = append(layouts, hStackLayout{
 			item:    item,
 			size:    size{item.calcWidth, available.height},
 			xOffset: xOffset,
+			ptype:   m.pType,
 		})
 
-		m := item.messure(size{item.calcWidth, available.height})
 		if m.pType == wrap {
 			break
 		}
@@ -124,11 +167,11 @@ func (h *hStack) layout(available size) []hStackLayout {
 			targetHeight = m.size.height
 		}
 
-		xOffset += item.calcWidth
+		xOffset += item.calcWidth + h.space
 	}
 
-	for _, layout := range layouts {
-		layout.size.height = targetHeight
+	for idx := range layouts {
+		layouts[idx].size.height = targetHeight
 	}
 
 	return layouts

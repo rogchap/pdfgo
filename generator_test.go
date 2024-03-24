@@ -21,10 +21,16 @@ func (d *testDoc) Build(c *pdf.DocContainer) {
 			VStack(func(stack *pdf.VStack) {
 				stack.Space(50)
 
-				stack.Item().ImageFile("testdata/park1.jpg")
 				stack.Item().Text(textCopy).FontSize(24)
 				stack.Item().Text(textCopy).FontSize(34)
 				stack.Item().Text(textCopy).FontSize(44)
+
+				stack.Item().HStack(func(hstack *pdf.HStack) {
+					hstack.RelativeItem(1).ImageFile("testdata/park1.jpg")
+					hstack.RelativeItem(1).ImageFile("testdata/park2.jpg")
+					hstack.RelativeItem(1).ImageFile("testdata/park3.jpg")
+				})
+
 				stack.Item().Text(textCopy).FontSize(54)
 				stack.Item().Text(textCopy).FontSize(64)
 				stack.Item().Text(textCopy).FontSize(64)
@@ -33,19 +39,23 @@ func (d *testDoc) Build(c *pdf.DocContainer) {
 				stack.Item().Text(textCopy).FontSize(64)
 				stack.Item().Text(textCopy).FontSize(54)
 				stack.Item().Text(textCopy).FontSize(54)
-				stack.Item().ImageFile("testdata/park2.jpg")
+				stack.Item().ImageFile("testdata/park4.jpg")
 				stack.Item().Text(textCopy).FontSize(54)
 				stack.Item().Text(textCopy).FontSize(54)
 				stack.Item().Text(textCopy).FontSize(54)
 			})
 	})
-	c.Page(func(page *pdf.Page) {
-		page.PageSize(pdf.PageSizeA4Landscape)
-		page.Content().HStack(func(hstack *pdf.HStack) {
-			hstack.Item().Text(textCopy)
-			hstack.Item().Text(textCopy)
-		})
-	})
+	// c.Page(func(page *pdf.Page) {
+	// 	page.PageSize(pdf.PageSizeA4Landscape)
+	// 	page.MarginVH(75)
+	//
+	// 	page.Content().HStack(func(hstack *pdf.HStack) {
+	// 		hstack.Space(50)
+	//
+	// 		hstack.RelativeItem(1).Text(textCopy).FontSize(36)
+	// 		hstack.RelativeItem(1).Text(textCopy).FontSize(62)
+	// 	})
+	// })
 }
 
 func TestGenerator(t *testing.T) {

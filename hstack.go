@@ -1,7 +1,5 @@
 package pdf
 
-import "fmt"
-
 type hStackPosType int
 
 const (
@@ -73,8 +71,6 @@ func (h *hStack) messure(available size) sizePlan {
 	if width > available.width || height > available.height {
 		return sizePlan{pType: wrap}
 	}
-
-	fmt.Printf("%#v\n", height)
 
 	s := size{width, height}
 	for _, layout := range layouts {

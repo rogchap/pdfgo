@@ -2,6 +2,8 @@ package pdf
 
 import (
 	"github.com/go-text/typesetting/font"
+	"github.com/go-text/typesetting/fontscan"
+	"github.com/go-text/typesetting/opentype/api/metadata"
 	"github.com/go-text/typesetting/shaping"
 	"golang.org/x/image/math/fixed"
 	"rogchap.com/skia"
@@ -32,6 +34,19 @@ func shape(text string, style TextStyle) []*textRun {
 		fontSize = style.FontSize
 	}
 
+	// TODO: should the FontMap be per-doc otherwise we will have race conditions
+	// with setting the query
+	fmap := defaultFontMgr.hbFontMgr
+
+	aspect := metadata.Aspect{}
+	aspect.SetDefaults()
+	aspect.Weight = metadata.Weight(style.FontWeight)
+	if style.Italic {
+		aspect.Style = metadata.StyleItalic
+	}
+
+	fmap.SetQuery(fontscan.Query{Families: style.FontFamily, Aspect: aspect})
+
 	runes := []rune(text)
 
 	in := shaping.Input{
@@ -42,7 +57,7 @@ func shape(text string, style TextStyle) []*textRun {
 		Size:      float32ToFixed266(fontSize),
 	}
 
-	ins := shaping.SplitByFace(in, defaultFontMgr.hbFontMgr)
+	ins := shaping.SplitByFace(in, fmap)
 
 	var x, y float32
 	var runs []*textRun

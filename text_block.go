@@ -1,8 +1,6 @@
 package pdf
 
 import (
-	"image/color"
-
 	"rogchap.com/skia"
 )
 
@@ -13,8 +11,52 @@ type TextSpan struct {
 	glyphs []*shapedGlyph
 }
 
-func (ts *TextSpan) FontSize(s float32) {
-	ts.style.FontSize = s
+func (ts *TextSpan) FontSize(v float32) *TextSpan {
+	ts.style.FontSize = v
+
+	return ts
+}
+
+func (ts *TextSpan) LineHeight(v float32) *TextSpan {
+	ts.style.LineHeight = v
+
+	return ts
+}
+
+func (ts *TextSpan) Regular() *TextSpan {
+	ts.style.FontWeight = FontWeightNormal
+
+	return ts
+}
+
+func (ts *TextSpan) Bold() *TextSpan {
+	ts.style.FontWeight = FontWeightBold
+
+	return ts
+}
+
+func (ts *TextSpan) Italic(v bool) *TextSpan {
+	ts.style.Italic = v
+
+	return ts
+}
+
+func (ts *TextSpan) FontWeight(w FontWeight) *TextSpan {
+	ts.style.FontWeight = w
+
+	return ts
+}
+
+func (ts *TextSpan) FontFamily(f ...string) *TextSpan {
+	ts.style.FontFamily = f
+
+	return ts
+}
+
+func (ts *TextSpan) Color(c string) *TextSpan {
+	ts.style.Color = c
+
+	return ts
 }
 
 type messureResult struct {
@@ -59,8 +101,7 @@ func (ts *TextSpan) draw(skcanvas *skia.Canvas, startIdx, endIdx int) {
 		}
 	}
 
-	// TODO paint should be from TextStyle
-	p := skia.NewPaint(color.RGBA{0, 0, 0, 0xff})
+	p := skia.NewPaint(parseHexColor(ts.style.Color))
 
 	xOffset := glyphsToDraw[0].position.X()
 	skcanvas.DrawText(builder.Make(), -xOffset, 0, p)
@@ -132,9 +173,6 @@ func (ts *TextSpan) messure(startIdx int, availableWidth float32) *messureResult
 	}
 
 	lineHeight := ts.style.LineHeight
-	if lineHeight < 1 {
-		lineHeight = 1
-	}
 
 	return &messureResult{
 		width:      width,
@@ -175,7 +213,16 @@ func (tb *TextBlock) Span(text string) *TextSpan {
 	ts := &TextSpan{
 		text: text,
 	}
+
+	// default styles
 	ts.style.LineHeight = 1
+	ts.style.FontWeight = FontWeightNormal
+	ts.style.Color = "000"
+
+	// TODO: We should not set this as it's platform spacific
+	// Move this to a document global setting to set for all text
+	ts.style.FontFamily = []string{"Helvetica Neue", "PingFang SC", "Arial Unicode MS"}
+
 	tb.items = append(tb.items, ts)
 	return ts
 }

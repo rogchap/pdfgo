@@ -51,6 +51,7 @@ func (c *container) Element(el drawable) {
 	c.child = el
 }
 
+// TODO: Should we rename to BackgroundColor to not conflict with a page's Background container?
 func (c *container) Background(color string) Container {
 	b := &background{
 		color: color,

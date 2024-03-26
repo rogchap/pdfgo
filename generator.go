@@ -2,15 +2,32 @@ package pdf
 
 import (
 	"io"
+
+	"rogchap.com/skia"
 )
 
-func Generate(w io.Writer, doc Document) {
-	skdoc := newSkiaDoc(w)
+func Generate(w io.Writer, builder DocBuilder) {
+	doc := &Doc{
+		Producer: "rogchap.com/skia",
+	}
+	builder.Build(doc)
+	content := doc.build()
 
-	container := &DocContainer{}
-	doc.Build(container)
+	metadata := skia.PDFMetadata{
+		Title:           doc.Title,
+		Author:          doc.Author,
+		Subject:         doc.Subject,
+		Keywords:        doc.Keywords,
+		Creator:         doc.Creator,
+		Producer:        doc.Producer,
+		Creation:        doc.Creation,
+		Modified:        doc.Modified,
+		PDFA:            doc.PDFA,
+		RasterDPI:       doc.RasterDPI,
+		EncodingQuality: doc.EncodingQuality,
+	}
 
-	content := container.build()
+	skdoc := newSkiaDoc(w, metadata)
 
 	pctx := &pageContext{}
 	_ = pctx

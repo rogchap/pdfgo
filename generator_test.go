@@ -3,14 +3,19 @@ package pdf_test
 import (
 	"os"
 	"testing"
+	"time"
 
 	"rogchap.com/pdf"
 )
 
 type testDoc struct{}
 
-func (d *testDoc) Build(c *pdf.DocContainer) {
-	c.Page(func(page *pdf.Page) {
+func (d *testDoc) Build(doc *pdf.Doc) {
+	doc.Author = "rogchap"
+	doc.Title = "Kitchen Sink"
+	doc.Creation = time.Now()
+
+	doc.Page(func(page *pdf.Page) {
 		// page.PageSize(pdf.PageSizeA4Landscape)
 		page.MarginV(200)
 		page.MarginH(75)

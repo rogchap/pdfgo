@@ -13,9 +13,9 @@ type skiaDoc struct {
 	pageSize size
 }
 
-func newSkiaDoc(w io.Writer) *skiaDoc {
+func newSkiaDoc(w io.Writer, metadata skia.PDFMetadata) *skiaDoc {
 	return &skiaDoc{
-		doc: skia.NewDocument(w),
+		doc: skia.NewDocumentWithMetadata(w, metadata),
 	}
 }
 

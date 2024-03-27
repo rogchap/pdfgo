@@ -13,13 +13,16 @@ type testDoc struct{}
 func (d *testDoc) Build(doc *pdf.Doc) {
 	doc.Author = "rogchap"
 	doc.Title = "Kitchen Sink"
+
 	doc.Creation = time.Now()
 
 	doc.Page(func(page *pdf.Page) {
 		// page.PageSize(pdf.PageSizeA4Landscape)
-		page.MarginV(200)
-		page.MarginH(75)
+		page.MarginVH(75)
 		// page.Color("#f00")
+
+		page.Header().Padding(0, 0, 0, 50).AlignCenter().Text("Header").Color("#f00")
+		page.Footer().Padding(0, 50, 0, 0).AlignRight().Text("Footer").Color("#00f")
 
 		page.Content().
 			// Background("#020").

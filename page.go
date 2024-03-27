@@ -32,9 +32,9 @@ type Page struct {
 	background drawable
 	foreground drawable
 
-	// header  element
+	header  drawable
 	content drawable
-	// footer  element
+	footer  drawable
 }
 
 func (p *Page) Size(w, h float32) {
@@ -86,16 +86,42 @@ func (p *Page) build(c *container) {
 		if p.color != "" {
 			mainLayer.Background(p.color)
 		}
-		mainLayer.Padding(p.marginLeft, p.marginTop, p.marginRight, p.marginBottom).
-			Element(p.content) // TODO change to header/content/footer
+		mainLayer.
+			Padding(p.marginLeft, p.marginTop, p.marginRight, p.marginBottom).
+			Element(p.contentCard())
 
 		layers.Layer(false).Element(p.foreground)
 	})
 }
 
+func (p *Page) contentCard() drawable {
+	content := &stretch{}
+	content.Element(p.content)
+
+	c := card{
+		header:  p.header,
+		content: content,
+		footer:  p.footer,
+	}
+
+	return &c
+}
+
+func (p *Page) Header() Container {
+	c := &container{}
+	p.header = c
+	return c
+}
+
 func (p *Page) Content() Container {
 	c := &container{}
 	p.content = c
+	return c
+}
+
+func (p *Page) Footer() Container {
+	c := &container{}
+	p.footer = c
 	return c
 }
 

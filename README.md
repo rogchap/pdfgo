@@ -1,10 +1,21 @@
 # PDF Go
 
+PDF Go is a powerful, open source, PDF generation library for the Go programming language.
+
 ## Feature
 
-* Powerful page layouts
-* Fonts manager
-* Font family substitutions
+* Powerful layout engine
+    * Page layers
+    * horizontal and vertical stacks
+    * Page headers and footers
+    * Automatically wrap content over multiple pages
+* Comprehensive text rendering
+    * Text styles (italic, bold, color, line height etc)
+    * Fonts manager including system fonts (yes, color emoji support 😍)
+    * Font family substitutions (fallback)
+    * Font subsetting (reduce PDF file size)
+    * Font shaping (support Arabic fonts)
+    * Right-to-left (RTL) content (Note: WIP)
 * ...
 
 ## Usage
@@ -15,8 +26,8 @@ This project is a WIP; no release has been made, and is pre-v0.1
 ```go
 type myDoc struct {}
 
-func (d *myDoc) Build(c *pdf.DocContainer) {
-	c.Page(func(page *pdf.Page) {
+func (d *myDoc) Build(b *pdf.Doc) {
+	d.Page(func(page *pdf.Page) {
         page.Content().
             Text("PDF Go").FontSize(64)
     }

@@ -22,7 +22,13 @@ func (d *testDoc) Build(doc *pdf.Doc) {
 		// page.Color("#f00")
 
 		page.Header().Padding(0, 0, 0, 50).AlignCenter().Text("Header").Color("#f00")
-		page.Footer().Padding(0, 50, 0, 0).AlignRight().Text("Footer").Color("#00f")
+		page.Footer().
+			Padding(0, 50, 0, 0).
+			AlignRight().
+			TextBlock(func(text *pdf.TextBlock) {
+				text.Span("Page ")
+				text.CurrentPage()
+			})
 
 		page.Content().
 			// Background("#020").

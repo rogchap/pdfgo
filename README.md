@@ -16,6 +16,7 @@ PDF Go is a powerful, open source, PDF generation library for the Go programming
     * Font subsetting (reduce PDF file size)
     * Font shaping (support Arabic fonts)
     * Right-to-left (RTL) content (Note: WIP)
+    * Page numbering
 * ...
 
 ## Usage

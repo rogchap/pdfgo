@@ -1,12 +1,16 @@
 package pdf
 
 import (
+	"fmt"
+
 	"rogchap.com/skia"
 )
 
 type TextSpan struct {
 	text  string
 	style TextStyle
+
+	pageNumber bool
 
 	glyphs []*shapedGlyph
 }
@@ -71,7 +75,7 @@ type messureResult struct {
 	totalIdx   int
 }
 
-func (ts *TextSpan) draw(skcanvas *skia.Canvas, startIdx, endIdx int) {
+func (ts *TextSpan) draw(pCtx *pageContext, canvas *skia.Canvas, startIdx, endIdx int) {
 	glyphsToDraw := ts.glyphs[startIdx : endIdx+1]
 	if len(glyphsToDraw) == 0 {
 		return
@@ -104,11 +108,16 @@ func (ts *TextSpan) draw(skcanvas *skia.Canvas, startIdx, endIdx int) {
 	p := skia.NewPaint(parseHexColor(ts.style.Color))
 
 	xOffset := glyphsToDraw[0].position.X()
-	skcanvas.DrawText(builder.Make(), -xOffset, 0, p)
+	canvas.DrawText(builder.Make(), -xOffset, 0, p)
 }
 
-func (ts *TextSpan) messure(startIdx int, availableWidth float32) *messureResult {
+func (ts *TextSpan) messure(pCtx *pageContext, startIdx int, availableWidth float32) *messureResult {
 	ts.glyphs = nil
+
+	if ts.pageNumber {
+		// TODO: allow for custom formatting
+		ts.text = fmt.Sprintf("%d", pCtx.currentPage)
+	}
 
 	runs := shape(ts.text, ts.style)
 
@@ -227,6 +236,13 @@ func (tb *TextBlock) Span(text string) *TextSpan {
 	return ts
 }
 
+func (tb *TextBlock) CurrentPage() *TextSpan {
+	s := tb.Span("000")
+	s.pageNumber = true
+
+	return s
+}
+
 func (tb *TextBlock) reset() {
 	tb.currentItemIdx = 0
 	tb.renderQueue = nil
@@ -304,7 +320,7 @@ func (tb *TextBlock) draw(available size) {
 		for _, item := range line.elements {
 
 			tb.skdoc.canvas.Translate(leftOffset, topOffset+line.ascent)
-			item.item.draw(tb.skdoc.canvas, item.messurement.startIdx, item.messurement.endIdx)
+			item.item.draw(tb.pCtx, tb.canvas(), item.messurement.startIdx, item.messurement.endIdx)
 			tb.skdoc.canvas.Translate(-leftOffset, -(topOffset + line.ascent))
 
 			leftOffset += item.messurement.width
@@ -372,7 +388,7 @@ func (tb *TextBlock) splitIntoLines(availableWidth, availableHeight float32) []t
 				currentSpan.text = " " + currentSpan.text
 			}
 
-			result := currentSpan.messure(currentItemIdx, availableWidth-currentWidth)
+			result := currentSpan.messure(tb.pCtx, currentItemIdx, availableWidth-currentWidth)
 
 			lineElements = append(lineElements, lineElement{
 				item:        currentSpan,

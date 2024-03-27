@@ -29,8 +29,7 @@ func Generate(w io.Writer, builder DocBuilder) {
 
 	skdoc := newSkiaDoc(w, metadata)
 
-	pctx := &pageContext{}
-	_ = pctx
+	pCtx := &pageContext{}
 
 	walkChildren(content, func(el drawable) {
 		if el == nil {
@@ -38,7 +37,7 @@ func Generate(w io.Writer, builder DocBuilder) {
 		}
 
 		el.setSkDoc(skdoc)
-		// TODO: set page context
+		el.setPageCtx(pCtx)
 
 		if el, ok := el.(resetable); ok {
 			el.reset()
@@ -46,7 +45,7 @@ func Generate(w io.Writer, builder DocBuilder) {
 	})
 
 	for {
-		pctx.Inc()
+		pCtx.Inc()
 		sp := content.messure(maxSize)
 
 		skdoc.beginPage(sp)

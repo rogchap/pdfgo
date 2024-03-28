@@ -6,6 +6,12 @@ import (
 	"rogchap.com/skia"
 )
 
+type textSpanCacheKey struct {
+	startIdx       int
+	availableWidth float32
+	pageNumber     int
+}
+
 type TextSpan struct {
 	text  string
 	style TextStyle
@@ -13,6 +19,8 @@ type TextSpan struct {
 	pageNumber bool
 
 	glyphs []*shapedGlyph
+
+	messureCache map[textSpanCacheKey]*messureResult
 }
 
 func (ts *TextSpan) FontSize(v float32) *TextSpan {
@@ -112,6 +120,19 @@ func (ts *TextSpan) draw(pCtx *pageContext, canvas *skia.Canvas, startIdx, endId
 }
 
 func (ts *TextSpan) messure(pCtx *pageContext, startIdx int, availableWidth float32) *messureResult {
+	if ts.messureCache == nil {
+		ts.messureCache = make(map[textSpanCacheKey]*messureResult)
+	}
+
+	cacheKey := textSpanCacheKey{startIdx: startIdx, availableWidth: availableWidth}
+	if ts.pageNumber {
+		cacheKey.pageNumber = pCtx.currentPage
+	}
+
+	if m, ok := ts.messureCache[cacheKey]; ok {
+		return m
+	}
+
 	ts.glyphs = nil
 
 	if ts.pageNumber {
@@ -183,7 +204,7 @@ func (ts *TextSpan) messure(pCtx *pageContext, startIdx int, availableWidth floa
 
 	lineHeight := ts.style.LineHeight
 
-	return &messureResult{
+	m := &messureResult{
 		width:      width,
 		height:     height,
 		lineHeight: lineHeight,
@@ -194,6 +215,10 @@ func (ts *TextSpan) messure(pCtx *pageContext, startIdx int, availableWidth floa
 		nextIdx:    nextIdx,
 		totalIdx:   len(ts.glyphs) - 1,
 	}
+
+	ts.messureCache[cacheKey] = m
+
+	return m
 }
 
 func maxEndIdx(glyphs []*shapedGlyph, startIdx int, availableWidth float32) int {
@@ -226,7 +251,7 @@ func (tb *TextBlock) Span(text string) *TextSpan {
 	// default styles
 	ts.style.LineHeight = 1
 	ts.style.FontWeight = FontWeightNormal
-	ts.style.Color = "000"
+	ts.style.Color = "#000"
 
 	// TODO: We should not set this as it's platform spacific
 	// Move this to a document global setting to set for all text

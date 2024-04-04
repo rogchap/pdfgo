@@ -28,6 +28,16 @@ func (d *testDoc) Build(doc *pdf.Doc) {
 		page.Footer().
 			Padding(0, 50, 0, 0).
 			AlignRight().
+			StyledBorder(pdf.BorderStyle{
+				Right:             0.5,
+				Bottom:            0.5,
+				Top:               0.5,
+				Left:              0.5,
+				RadiusTopLeft:     10,
+				RadiusBottomRight: 10,
+				Color:             "#aaa",
+			}).
+			Padding(10, 10, 10, 10).
 			TextBlock(func(text *pdf.TextBlock) {
 				text.Span("Page ")
 				text.CurrentPage()

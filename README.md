@@ -5,7 +5,7 @@ PDF Go is a powerful, open source, PDF generation library for the Go programming
 ## Feature
 
 * Powerful layout engine
-    * Page layers
+    * Page layers (great for watermarks)
     * horizontal and vertical stacks
     * Page headers and footers
     * Automatically wrap content over multiple pages
@@ -17,6 +17,10 @@ PDF Go is a powerful, open source, PDF generation library for the Go programming
     * Font shaping (support Arabic fonts)
     * Right-to-left (RTL) content (Note: WIP)
     * Page numbering
+* Customizable styling
+    * Background colors
+    * Container border styles, including corner radius
+
 * ...
 
 ## Usage

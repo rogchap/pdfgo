@@ -2,6 +2,8 @@ package pdf
 
 type Container interface {
 	Element(el drawable)
+	Border(width, radius float32, color string) Container
+	StyledBorder(style BorderStyle) Container
 	Background(color string) Container
 	Padding(left, top, right, bottom float32) Container
 	Fixed(width, height float32) Container
@@ -41,14 +43,36 @@ func (c *container) draw(available size) {
 	c.child.draw(available)
 }
 
-// func (c *container) layers(cb func(ls *layers)) {
-// 	ls := &layers{}
-// 	cb(ls)
-// 	// c.child = ls
-// }
-
 func (c *container) Element(el drawable) {
 	c.child = el
+}
+
+func (c *container) Border(width, raidus float32, color string) Container {
+	b := &border{
+		style: &BorderStyle{
+			Top:               width,
+			Right:             width,
+			Bottom:            width,
+			Left:              width,
+			RadiusTopRight:    raidus,
+			RadiusBottomRight: raidus,
+			RadiusBottomLeft:  raidus,
+			RadiusTopLeft:     raidus,
+			Color:             color,
+		},
+	}
+	c.child = b
+
+	return b
+}
+
+func (c *container) StyledBorder(style BorderStyle) Container {
+	b := &border{
+		style: &style,
+	}
+	c.child = b
+
+	return b
 }
 
 // TODO: Should we rename to BackgroundColor to not conflict with a page's Background container?

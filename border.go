@@ -45,7 +45,7 @@ func (b *border) draw(available size) {
 
 	paint := skia.NewPaint(parseHexColor(style.Color))
 	paint.SetStyle(skia.PaintStyleStroke)
-	// paint.SetStrokeCap(skia.StrokeCapSquare)
+	paint.SetStrokeCap(skia.StrokeCapSquare)
 
 	if style.Top > 0 {
 		paint.SetStrokeWidth(style.Top)

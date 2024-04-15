@@ -17,6 +17,7 @@ type Container interface {
 	TextBlock(cb func(text *TextBlock))
 	PageBreak()
 	ImageFile(path string) *Image
+	Table(cb func(table *Table))
 }
 
 type container struct {
@@ -169,4 +170,11 @@ func (c *container) ImageFile(path string) *Image {
 	i := newImageFromFile(path)
 	c.child = i
 	return i
+}
+
+func (c *container) Table(cb func(table *Table)) {
+	t := &Table{}
+	cb(t)
+	t.organizeCells()
+	c.child = t
 }

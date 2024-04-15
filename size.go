@@ -17,6 +17,17 @@ type sizePlan struct {
 	pType sizePlanType
 }
 
+func fullRenderZero() sizePlan {
+	return fullRender(size{})
+}
+
+func fullRender(s size) sizePlan {
+	return sizePlan{
+		pType: full,
+		size:  s,
+	}
+}
+
 var maxSize = size{100_000, 100_000}
 
 type PageSize size
